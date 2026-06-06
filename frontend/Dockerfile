@@ -1,6 +1,10 @@
 # Stage 1: Build the React application using Vite
 FROM node:20-alpine AS builder
 
+# Accept VITE_API_URL as a build-time argument
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Set working directory inside the container
 WORKDIR /app
 

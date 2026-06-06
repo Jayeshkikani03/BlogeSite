@@ -28,7 +28,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://dev.quizgameh5.com/api
+        - VITE_API_URL=https://dev.quizgameh5.com/api
     container_name: techflow-frontend
     ports:
       - "3000:80"

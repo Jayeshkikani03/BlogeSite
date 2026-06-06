@@ -1,0 +1,53 @@
+name: Production Deployment & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+
+jobs:
+  release-and-deploy:
+    name: Build, Version, and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Tag Frontend Image
+        run: |
+          # We tag the image with:
+          # 1. 'latest' for the most recent build
+          # 2. 'github.sha' for exact commit traceability
+          # 3. 'github.ref_name' which will be 'main' or 'v1.0.0' depending on what triggered this
+          docker build \
+            -t techflow-frontend:latest \
+            -t techflow-frontend:${{ github.sha }} \
+            -t techflow-frontend:${{ github.ref_name }} \
+            ./frontend
+
+      - name: Build and Tag Backend Image
+        run: |
+          docker build \
+            -t techflow-backend:latest \
+            -t techflow-backend:${{ github.sha }} \
+            -t techflow-backend:${{ github.ref_name }} \
+            ./backend
+
+      - name: Create GitHub Release
+        # Only create a GitHub release if a semantic version tag (e.g. v1.0.0) was pushed
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+
+      - name: Prepare Deployment (Mock AWS Step)
+        run: |
+          echo "AWS is not implemented yet."
+          echo "Ready to deploy images with tag: ${{ github.ref_name }}"
+          echo "In the future, this step will authenticate via OIDC, push to ECR, and deploy to AWS ECS production tasks."

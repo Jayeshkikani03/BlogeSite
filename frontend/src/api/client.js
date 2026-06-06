@@ -13,6 +13,12 @@ const client = axios.create({
 // Request Interceptor
 client.interceptors.request.use(
   (config) => {
+    // Add auth token if available
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     // Audit logs for outgoing requests
     if (import.meta.env.MODE === 'development') {
       console.log(`[API Request] Method: ${config.method.toUpperCase()} | URL: ${config.url}`);

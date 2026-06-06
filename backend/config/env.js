@@ -16,7 +16,9 @@ const config = {
     allowedOrigins: process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',')
       : ['http://localhost:5173', 'http://localhost:3000']
-  }
+  },
+  mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/BlogeSite',
+  jwtSecret: process.env.JWT_SECRET || 'fallback-secret-key-for-development'
 };
 
 // Validate variables

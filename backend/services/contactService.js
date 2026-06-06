@@ -1,19 +1,28 @@
+const Inquiry = require('../models/Inquiry');
+
 /**
  * Contact Form Logic Service.
  */
 const saveContactInquiry = async (contactData) => {
   const { name, email, subject, message } = contactData;
 
-  // Real database calls or email dispatches happen here in production
-  console.log('--- Enterprise Contact Inquiry ---');
-  console.log(`Time   : ${new Date().toISOString()}`);
+  // Save inquiry in MongoDB
+  const inquiry = await Inquiry.create({
+    name,
+    email,
+    subject,
+    message
+  });
+
+  console.log('--- Enterprise Contact Inquiry Saved to DB ---');
+  console.log(`ID     : ${inquiry._id}`);
+  console.log(`Time   : ${inquiry.createdAt}`);
   console.log(`Name   : ${name}`);
   console.log(`Email  : ${email}`);
   console.log(`Subject: ${subject}`);
-  console.log(`Message: ${message}`);
   console.log('---------------------------------');
 
-  return { success: true };
+  return { success: true, data: inquiry };
 };
 
 module.exports = {

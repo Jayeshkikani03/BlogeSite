@@ -125,6 +125,15 @@ export default function Navbar() {
                 System Status
               </Link>
             </li>
+            <li className="nav-item">
+              <Link 
+                className={`nav-link px-3 py-2 text-white ${location.pathname.startsWith('/admin') ? 'active text-gradient-cyan' : ''}`} 
+                to="/admin" 
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Panel
+              </Link>
+            </li>
           </ul>
           
           <div className="d-flex mt-3 mt-lg-0">

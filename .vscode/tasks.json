@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "backend",
+      "problemMatcher": [],
+      "label": "Start Backend Server",
+      "detail": "nodemon server.js in backend directory"
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "frontend",
+      "problemMatcher": [],
+      "label": "Start Frontend Server",
+      "detail": "vite in frontend directory"
+    }
+  ]
+}

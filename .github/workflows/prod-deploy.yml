@@ -72,4 +72,4 @@ jobs:
           script: |
             cd ~/apps/techflow/BlogeSite
             git pull origin main
-            docker compose up --build -d
+            DOCKER_BUILDKIT=0 docker compose up --build -d

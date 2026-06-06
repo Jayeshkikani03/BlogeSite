@@ -17,7 +17,7 @@ export default function AdminDashboard() {
     try {
       const data = await inquiryService.getInquiries();
       if (data?.success) {
-        setInquiries(data.data.inquiries || []);
+        setInquiries(data.inquiries || []);
       }
     } catch (err) {
       showError(err.message || 'Failed to fetch inquiries.');

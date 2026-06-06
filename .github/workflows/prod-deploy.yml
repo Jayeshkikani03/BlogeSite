@@ -63,7 +63,13 @@ jobs:
         with:
           generate_release_notes: true
 
-      - name: Prepare Deployment (Simulated)
-        run: |
-          echo "Production deployment successful"
-          echo "AWS is not implemented yet. Production release images tagged with ${{ github.ref_name }} are compiled."
+      - name: Deploy to AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/apps/techflow/BlogeSite
+            git pull origin main
+            docker compose up --build -d

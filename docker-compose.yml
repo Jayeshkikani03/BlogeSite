@@ -15,7 +15,7 @@ services:
       - ALLOWED_ORIGINS=http://dev.quizgameh5.com,https://dev.quizgameh5.com,http://3.6.197.13:3000,http://localhost:3000
     healthcheck:
       # Docker healthcheck to ensure the backend is actually ready to serve traffic
-      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/health"]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:5000/api/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -28,7 +28,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://dev.quizgameh5.com:5000/api
+        - VITE_API_URL=http://dev.quizgameh5.com/api
     container_name: techflow-frontend
     ports:
       - "3000:80"

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 /**
  * Standard Error Boundary block preventing frontend browser crashes.

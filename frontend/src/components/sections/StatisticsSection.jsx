@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Statistics dashboard display section.

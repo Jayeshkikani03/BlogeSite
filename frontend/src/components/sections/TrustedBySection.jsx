@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Trusted By Section displaying corporate partner logos.

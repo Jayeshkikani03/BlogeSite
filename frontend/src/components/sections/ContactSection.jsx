@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useContactForm } from '../../hooks/useContactForm';
 import useToast from '../../hooks/useToast';
 

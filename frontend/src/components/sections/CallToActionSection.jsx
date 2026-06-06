@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Call To Action signup banner section.

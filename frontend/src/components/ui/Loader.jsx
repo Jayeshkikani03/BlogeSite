@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Full-page SaaS loading overlay.

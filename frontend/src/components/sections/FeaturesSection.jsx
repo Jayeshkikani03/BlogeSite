@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Enterprise Features grid section.

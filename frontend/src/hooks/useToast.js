@@ -14,5 +14,5 @@ export default function useToast() {
     showToast: context.showToast,
     showSuccess: (msg) => context.showToast(msg, 'success'),
     showError: (msg) => context.showToast(msg, 'error')
-  }), [context.showToast]);
+  }), [context]);
 }

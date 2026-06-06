@@ -27,7 +27,7 @@ export const formatDateTime = (isoString) => {
   try {
     const date = new Date(isoString);
     return date.toLocaleString();
-  } catch (err) {
+  } catch {
     return isoString;
   }
 };

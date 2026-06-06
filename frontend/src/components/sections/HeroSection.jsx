@@ -31,7 +31,7 @@ export default function HeroSection() {
 
             <h1 className="display-4 fw-extrabold text-white mb-4 lh-sm" style={{ letterSpacing: '-1.5px' }}>
               The deployment engine <br />
-              built for <span className="text-gradient">cloud scale</span>
+              built for <span className="text-gradient">seamless cloud scale</span>
             </h1>
 
             <p className="lead text-gray mb-5 fs-5 lh-relaxed" style={{ maxWidth: '540px' }}>

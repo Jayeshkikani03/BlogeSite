@@ -33,7 +33,10 @@ export default function AdminDashboard() {
       return;
     }
 
-    fetchInquiries();
+    // Defer the call asynchronously to prevent synchronous setState inside the effect
+    Promise.resolve().then(() => {
+      fetchInquiries();
+    });
   }, [navigate, fetchInquiries]);
 
   const handleLogout = () => {

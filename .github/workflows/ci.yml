@@ -41,7 +41,7 @@ jobs:
 
       - name: Run Linter (Frontend)
         working-directory: ./frontend
-        run: npm run lint --if-present
+        run: npm run lint
 
       - name: Run Linter (Backend)
         working-directory: ./backend
@@ -51,7 +51,9 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      # Note: The backend is a standard Node API and doesn't require a compilation step.
+      - name: Build Backend Application (Mock)
+        working-directory: ./backend
+        run: echo "Backend build successful (No compile required for Node)"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

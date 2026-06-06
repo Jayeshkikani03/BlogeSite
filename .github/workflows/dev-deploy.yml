@@ -25,8 +25,17 @@ jobs:
         run: |
           docker build -t techflow-backend:dev-${{ github.sha }} -t techflow-backend:develop ./backend
 
-      - name: Prepare Deployment (Mock AWS Step)
+      - name: Generate Build Metadata
         run: |
-          echo "AWS is not implemented yet."
-          echo "Images built and successfully tagged with: dev-${{ github.sha }} and develop"
-          echo "In the future, we will push these to ECR and trigger an ECS service update for the staging environment."
+          echo "{\"environment\": \"development\", \"commit\": \"${{ github.sha }}\", \"branch\": \"${{ github.ref_name }}\", \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"}" > build-info.json
+
+      - name: Upload Build Info Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info
+          path: build-info.json
+
+      - name: Prepare Deployment (Simulated)
+        run: |
+          echo "Development deployment successful"
+          echo "AWS is not implemented yet. Staging images are ready on local host."

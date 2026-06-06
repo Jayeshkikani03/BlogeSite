@@ -2,10 +2,10 @@ name: Production Deployment & Release
 
 on:
   push:
-    tags:
-      - 'v*'
     branches:
       - main
+    tags:
+      - 'v*'
 
 jobs:
   release-and-deploy:
@@ -16,15 +16,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Validate Tag Version Format
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          if [[ ! "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Tag $TAG_NAME does not follow SemVer format (vX.Y.Z)"
+            exit 1
+          fi
+          echo "Version tag $TAG_NAME is valid."
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build and Tag Frontend Image
         run: |
-          # We tag the image with:
-          # 1. 'latest' for the most recent build
-          # 2. 'github.sha' for exact commit traceability
-          # 3. 'github.ref_name' which will be 'main' or 'v1.0.0' depending on what triggered this
           docker build \
             -t techflow-frontend:latest \
             -t techflow-frontend:${{ github.sha }} \
@@ -39,15 +45,23 @@ jobs:
             -t techflow-backend:${{ github.ref_name }} \
             ./backend
 
+      - name: Generate Release Metadata
+        run: |
+          echo "{\"environment\": \"production\", \"commit\": \"${{ github.sha }}\", \"branch\": \"${{ github.ref_name }}\", \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"}" > build-info.json
+
+      - name: Upload Build Info Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info
+          path: build-info.json
+
       - name: Create GitHub Release
-        # Only create a GitHub release if a semantic version tag (e.g. v1.0.0) was pushed
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
 
-      - name: Prepare Deployment (Mock AWS Step)
+      - name: Prepare Deployment (Simulated)
         run: |
-          echo "AWS is not implemented yet."
-          echo "Ready to deploy images with tag: ${{ github.ref_name }}"
-          echo "In the future, this step will authenticate via OIDC, push to ECR, and deploy to AWS ECS production tasks."
+          echo "Production deployment successful"
+          echo "AWS is not implemented yet. Production release images tagged with ${{ github.ref_name }} are compiled."

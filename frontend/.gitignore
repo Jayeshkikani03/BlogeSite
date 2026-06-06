@@ -1,0 +1,30 @@
+# Visual Studio Code & IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Node dependencies
+node_modules/
+
+# Production builds
+dist/
+dist-ssr/
+
+# Environment files
+.env
+.env.development
+.env.production
+.env.local
+.env.*.local
+
+# Temp files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

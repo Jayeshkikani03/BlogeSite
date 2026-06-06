@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import inquiryService from '../services/inquiryService';
@@ -12,17 +12,7 @@ export default function AdminDashboard() {
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // If not authenticated, redirect to login
-    if (!authService.isAuthenticated()) {
-      navigate('/admin/login');
-      return;
-    }
-
-    fetchInquiries();
-  }, [navigate]);
-
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     setLoading(true);
     try {
       const data = await inquiryService.getInquiries();
@@ -34,7 +24,17 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    // If not authenticated, redirect to login
+    if (!authService.isAuthenticated()) {
+      navigate('/admin/login');
+      return;
+    }
+
+    fetchInquiries();
+  }, [navigate, fetchInquiries]);
 
   const handleLogout = () => {
     authService.logout();

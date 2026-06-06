@@ -35,7 +35,13 @@ jobs:
           name: build-info
           path: build-info.json
 
-      - name: Prepare Deployment (Simulated)
-        run: |
-          echo "Development deployment successful"
-          echo "AWS is not implemented yet. Staging images are ready on local host."
+      - name: Deploy to Dev AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/apps/techflow-dev/BlogeSite
+            git pull origin develop
+            DOCKER_BUILDKIT=0 docker compose up --build -d

@@ -49,6 +49,12 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.text-gray {
+  color: var(--text-gray) !important;
+}
+.text-dark {
+  color: var(--text-dark) !important;
+}
 
 /* Blurred Glowing Spots */
 .glow-orb {

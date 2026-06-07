@@ -37,7 +37,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="position-relative overflow-hidden py-5 d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+    <div data-theme="dark" className="position-relative overflow-hidden py-5 d-flex align-items-center justify-content-center section-black min-h-screen">
       {/* Decorative Glow Orbs */}
       <div className="glow-orb" style={{ width: '300px', height: '300px', background: 'var(--primary-glow)', top: '10%', left: '15%' }}></div>
       <div className="glow-orb" style={{ width: '250px', height: '250px', background: 'var(--secondary-glow)', bottom: '10%', right: '15%' }}></div>

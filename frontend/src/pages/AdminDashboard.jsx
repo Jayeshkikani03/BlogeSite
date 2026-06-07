@@ -1,14 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import inquiryService from '../services/inquiryService';
 import useToast from '../hooks/useToast';
+import InquiryChart from '../components/admin/InquiryChart';
 
 export default function AdminDashboard() {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [replyText, setReplyText] = useState('');
+  const [replySending, setReplySending] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
 
@@ -80,22 +84,45 @@ export default function AdminDashboard() {
     }
   };
 
-  // Filtered inquiries based on search term
-  const filteredInquiries = inquiries.filter((item) => {
+  // Filtered inquiries based on search term and status filter
+  const filteredInquiries = useMemo(() => inquiries.filter((item) => {
     const term = searchTerm.toLowerCase();
-    return (
+    const matchesSearch = (
       item.name.toLowerCase().includes(term) ||
       item.email.toLowerCase().includes(term) ||
       item.subject.toLowerCase().includes(term) ||
       item.message.toLowerCase().includes(term)
     );
-  });
+    const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  }), [inquiries, searchTerm, statusFilter]);
 
   const totalCount = inquiries.length;
   const unreadCount = inquiries.filter((item) => item.status === 'unread').length;
+  const todayCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return inquiries.filter((item) => new Date(item.createdAt).toDateString() === today).length;
+  }, [inquiries]);
+
+  const handleReply = async () => {
+    if (!replyText.trim() || !selectedInquiry) return;
+    setReplySending(true);
+    try {
+      await inquiryService.replyInquiry(selectedInquiry._id, replyText.trim());
+      showSuccess('Reply sent successfully.');
+      setReplyText('');
+    } catch (err) {
+      showError(err.response?.data?.error || 'SMTP failed to send mail. Opening default mail client...');
+      setTimeout(() => {
+        window.location.href = `mailto:${selectedInquiry.email}?subject=Re: ${encodeURIComponent(selectedInquiry.subject)}&body=${encodeURIComponent(replyText)}`;
+      }, 1800);
+    } finally {
+      setReplySending(false);
+    }
+  };
 
   return (
-    <div className="position-relative overflow-hidden py-5" style={{ minHeight: '90vh' }}>
+    <div data-theme="dark" className="position-relative overflow-hidden py-5 section-black min-h-screen">
       {/* Decorative background glow */}
       <div className="glow-orb" style={{ width: '400px', height: '400px', background: 'var(--primary-glow)', top: '-5%', right: '5%' }}></div>
 
@@ -145,15 +172,42 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+          <div className="col-12 col-sm-6 col-md-4">
+            <div className="saas-card p-4">
+              <div className="d-flex align-items-center gap-3">
+                <div className="rounded-3 bg-success bg-opacity-10 p-3" style={{ border: '1px solid rgba(52, 211, 153, 0.2)' }}>
+                  <i className="bi bi-calendar-check-fill fs-4 text-success"></i>
+                </div>
+                <div>
+                  <h6 className="text-gray mb-1 small fw-semibold">Today</h6>
+                  <h3 className="text-white fw-bold mb-0">{todayCount}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Dashboard Workspace */}
+        {/* Inquiry Chart Visualization */}
+        <InquiryChart inquiries={inquiries} />
+
         <div className="row g-4">
           {/* Left Panel: Inquiries list */}
           <div className={`${selectedInquiry ? 'col-lg-7' : 'col-12'}`}>
             <div className="saas-card p-4 h-100">
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
-                <h5 className="text-white fw-bold mb-0">Inquiries Inbox</h5>
+                <div className="d-flex align-items-center gap-2 flex-wrap">
+                  <h5 className="text-white fw-bold mb-0">Inquiries Inbox</h5>
+                  {['all', 'unread', 'read'].map((f) => (
+                    <button
+                      key={f}
+                      className={`btn btn-sm rounded-pill px-3 py-1 ${statusFilter === f ? 'btn-saas-primary' : 'btn-saas-secondary'}`}
+                      style={{ fontSize: '0.75rem' }}
+                      onClick={() => setStatusFilter(f)}
+                    >
+                      {f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
+                </div>
                 <div className="position-relative" style={{ maxWidth: '280px' }}>
                   <i className="bi bi-search position-absolute text-gray" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)' }}></i>
                   <input
@@ -272,6 +326,25 @@ export default function AdminDashboard() {
                     <div className="p-3 bg-black bg-opacity-30 rounded-3 text-gray border border-muted" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
                       {selectedInquiry.message}
                     </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="text-dark small uppercase fw-bold d-block mb-1">Reply</label>
+                    <textarea
+                      className="form-control form-input-saas mb-2"
+                      rows="3"
+                      placeholder="Type your reply..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                    <button
+                      className="btn btn-saas-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                      onClick={handleReply}
+                      disabled={replySending || !replyText.trim()}
+                    >
+                      {replySending ? <span className="spinner-border spinner-border-sm" /> : <i className="bi bi-send-fill"></i>}
+                      <span>Send Reply</span>
+                    </button>
                   </div>
 
                   <div className="d-flex gap-2">

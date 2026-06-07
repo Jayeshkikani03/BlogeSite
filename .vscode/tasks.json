@@ -2,20 +2,46 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Start Backend Server",
       "type": "npm",
       "script": "dev",
       "path": "backend",
-      "problemMatcher": [],
-      "label": "Start Backend Server",
-      "detail": "nodemon server.js in backend directory"
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "debugger listening on|Server running"
+        }
+      }
     },
     {
+      "label": "Start Frontend Server",
       "type": "npm",
       "script": "dev",
       "path": "frontend",
-      "problemMatcher": [],
-      "label": "Start Frontend Server",
-      "detail": "vite in frontend directory"
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Local:"
+        }
+      }
+    },
+    {
+      "label": "Start Entire App",
+      "dependsOn": [
+        "Start Backend Server",
+        "Start Frontend Server"
+      ],
+      "problemMatcher": []
     }
   ]
 }

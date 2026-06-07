@@ -10,6 +10,7 @@ export default function ContactSection() {
     values,
     errors,
     isLoading,
+    cooldown,
     successMessage,
     errorMessage,
     handleChange,
@@ -158,13 +159,18 @@ export default function ContactSection() {
                       <button 
                         type="submit" 
                         className="btn btn-saas-primary px-5 py-3 d-inline-flex align-items-center gap-2"
-                        disabled={isLoading}
+                        disabled={isLoading || cooldown > 0}
                         aria-busy={isLoading}
                       >
                         {isLoading ? (
                           <>
                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             <span>Sending Inquiry...</span>
+                          </>
+                        ) : cooldown > 0 ? (
+                          <>
+                            <i className="bi bi-clock"></i>
+                            <span>Wait {cooldown}s to resend</span>
                           </>
                         ) : (
                           <>

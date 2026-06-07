@@ -14,6 +14,11 @@ const inquiryService = {
   deleteInquiry: async (id) => {
     const response = await client.delete(`/inquiries/${id}`);
     return response.data;
+  },
+
+  replyInquiry: async (id, message) => {
+    const response = await client.post(`/inquiries/${id}/reply`, { message });
+    return response.data;
   }
 };
 

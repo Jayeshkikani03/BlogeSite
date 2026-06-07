@@ -4,6 +4,8 @@ import AppRoutes from './routes/AppRoutes';
 import MainLayout from './layouts/MainLayout';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import { ToastProvider } from './contexts/ToastContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import ScrollToHash from './components/common/ScrollToHash';
 import './styles/custom.css';
 
 /**
@@ -12,13 +14,16 @@ import './styles/custom.css';
 export default function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <Router>
-          <MainLayout>
-            <AppRoutes />
-          </MainLayout>
-        </Router>
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <Router>
+            <ScrollToHash />
+            <MainLayout>
+              <AppRoutes />
+            </MainLayout>
+          </Router>
+        </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

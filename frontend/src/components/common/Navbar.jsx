@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import authService from '../../services/authService';
+import { useTheme } from '../../contexts/ThemeContext';
 
 /**
  * Sticky Navigation Bar with background blur, React Router navigation hooks, and scroll transitions.
@@ -9,6 +10,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -85,15 +87,13 @@ export default function Navbar() {
               )}
             </li>
             <li className="nav-item">
-              {isHome ? (
-                <a className="nav-link px-3 py-2 text-white" href="#features" onClick={() => setIsOpen(false)}>
-                  Features
-                </a>
-              ) : (
-                <Link className="nav-link px-3 py-2 text-white" to="/#features" onClick={() => setIsOpen(false)}>
-                  Features
-                </Link>
-              )}
+              <Link 
+                className={`nav-link px-3 py-2 text-white ${location.pathname === '/features' ? 'active text-gradient' : ''}`} 
+                to="/features" 
+                onClick={() => setIsOpen(false)}
+              >
+                Features
+              </Link>
             </li>
             <li className="nav-item">
               {isHome ? (
@@ -118,35 +118,64 @@ export default function Navbar() {
               )}
             </li>
             <li className="nav-item">
-              <Link 
-                className={`nav-link px-3 py-2 text-white ${location.pathname === '/system-status' ? 'active text-gradient-cyan' : ''}`} 
-                to="/system-status" 
+              <Link
+                className={`nav-link px-3 py-2 text-white ${location.pathname === '/blog' ? 'active text-gradient' : ''}`}
+                to="/blog"
                 onClick={() => setIsOpen(false)}
               >
-                System Status
+                Blog
               </Link>
             </li>
             {authService.isAuthenticated() && (
-              <li className="nav-item">
-                <Link 
-                  className={`nav-link px-3 py-2 text-white ${location.pathname.startsWith('/admin') ? 'active text-gradient-cyan' : ''}`} 
-                  to="/admin" 
-                  onClick={() => setIsOpen(false)}
-                >
-                  Admin Panel
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link 
+                    className={`nav-link px-3 py-2 text-white ${location.pathname === '/system-status' ? 'active text-gradient-cyan' : ''}`} 
+                    to="/system-status" 
+                    onClick={() => setIsOpen(false)}
+                  >
+                    System Status
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link 
+                    className={`nav-link px-3 py-2 text-white ${location.pathname.startsWith('/admin') ? 'active text-gradient-cyan' : ''}`} 
+                    to="/admin" 
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
           
-          <div className="d-flex mt-3 mt-lg-0">
-            <a 
-              href="#contact" 
-              className="btn btn-saas-primary w-100" 
-              onClick={() => setIsOpen(false)}
+          <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+            <button
+              className="btn btn-saas-secondary px-3 py-2"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              Get Started
-            </a>
+              <i className={`bi ${theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+            </button>
+            {isHome ? (
+              <a 
+                href="#contact" 
+                className="btn btn-saas-primary" 
+                onClick={() => setIsOpen(false)}
+              >
+                Get Started
+              </a>
+            ) : (
+              <Link 
+                to="/#contact" 
+                className="btn btn-saas-primary" 
+                onClick={() => setIsOpen(false)}
+              >
+                Get Started
+              </Link>
+            )}
           </div>
         </div>
       </div>

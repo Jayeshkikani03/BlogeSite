@@ -1,12 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import contactService from '../services/contactService';
 
-const initialValues = {
-  name: '',
-  email: '',
-  subject: '',
-  message: ''
-};
+const COOLDOWN_SECONDS = 30;
+const initialValues = { name: '', email: '', subject: '', message: '' };
 
 export const useContactForm = () => {
   const [values, setValues] = useState(initialValues);
@@ -14,6 +10,8 @@ export const useContactForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [cooldown, setCooldown] = useState(0);
+  const cooldownRef = useRef(null);
 
   // Local client-side validator helper
   const validateField = (name, value) => {
@@ -107,8 +105,16 @@ export const useContactForm = () => {
       const response = await contactService.submitContact(values);
       if (response.success) {
         setSuccessMessage(response.message || 'Contact submitted successfully!');
-        setValues(initialValues); // reset form
+        setValues(initialValues);
         setErrors({});
+        // Start cooldown
+        setCooldown(COOLDOWN_SECONDS);
+        cooldownRef.current = setInterval(() => {
+          setCooldown((c) => {
+            if (c <= 1) { clearInterval(cooldownRef.current); return 0; }
+            return c - 1;
+          });
+        }, 1000);
       } else {
         setErrorMessage(response.message || 'Failed to submit contact.');
       }
@@ -136,6 +142,7 @@ export const useContactForm = () => {
     values,
     errors,
     isLoading,
+    cooldown,
     successMessage,
     errorMessage,
     handleChange,
